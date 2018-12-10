@@ -164,8 +164,10 @@ const PuppiesList = ({ puppies }) => (
 );
 
 const mapStateToProps = state => ({
-  // This is where we define that `PuppiesList` care only about
-  // the `puppies` property from the global state
+  /*
+   * This is where we define that `PuppiesList` cares only about
+   * the `puppies` property from the global state.
+   */
   puppies: state.puppies
 });
 
