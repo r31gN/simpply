@@ -22,7 +22,7 @@
     "url": "https://github.com/r31gN/simpply/issues"
   },
   "homepage": "https://github.com/r31gN/simpply#readme",
-  "peerDependencies": {
+  "dependencies": {
     "react": "^16.7.0-alpha.2"
   }
 }
