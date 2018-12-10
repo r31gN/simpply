@@ -207,7 +207,7 @@ const createStore = appReducer => {
  */
 const createProvider = appReducer => ({ children }) => {
   const store = createStore(appReducer);
-  return <Ctx.Provider value={store}>{children}</Ctx.Provider>;
+  return React.createElement(Ctx.Provider, { value: store }, children);
 };
 
 /**
@@ -230,7 +230,11 @@ const connect = mapStateToProps => Component => {
       `The result of calling 'mapStateToProps' function must be an Object.`
     );
 
-    return <MemoComponent {...props} {...slicedState} dispatch={dispatch} />;
+    return React.createElement(MemoComponent, {
+      ...props,
+      ...slicedState,
+      dispatch
+    });
   };
 
   return EnhancedComponent;
