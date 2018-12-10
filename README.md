@@ -13,6 +13,7 @@ A simple state management library for React app, built on top of the Context &am
       - [`createSystemStorage`](#createsystemstorage)
       - [`createProvider`](#createprovider)
       - [`connect`](#connect)
+    - [Examples](#examples)
     - [Author](#author)
     - [License](#license)
 
@@ -172,6 +173,10 @@ export default connect(mapStateToProps)(PuppiesList);
 ```
 
 The `connect` function is similar to Redux's `connect` functionality.
+
+### Examples
+
+For an example that uses `simpply`, check out [this repo](https://github.com/r31gN/react-state-management).
 
 ### Author
 
