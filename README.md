@@ -176,6 +176,7 @@ The `connect` function is similar to Redux's `connect` functionality.
 ### Author
 
 **Name**: Vlad Zelinschi
+
 **Email**: `the.reignn@gmail.com` or `vlad@krak3n.co`
 
 ### License
