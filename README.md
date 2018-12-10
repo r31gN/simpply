@@ -13,6 +13,8 @@ A simple state management library for React app, built on top of the Context &am
       - [`createSystemStorage`](#createsystemstorage)
       - [`createProvider`](#createprovider)
       - [`connect`](#connect)
+    - [Author](#author)
+    - [License](#license)
 
 ### Installation
 
@@ -170,3 +172,12 @@ export default connect(mapStateToProps)(PuppiesList);
 ```
 
 The `connect` function is similar to Redux's `connect` functionality.
+
+### Author
+
+**Name**: Vlad Zelinschi
+**Email**: `the.reignn@gmail.com` or `vlad@krak3n.co`
+
+### License
+
+[MIT © Vlad Zelinschi](/LICENSE)
