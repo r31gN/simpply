@@ -1,13 +1,12 @@
 import React, { useReducer, useContext } from 'react';
 
 /**
- * Keeps local track between the effect and the name of the key
- * to which it belongs.
+ * Keeps local track between the effect and the Storage Entity they belong to.
  */
-const effectsToNameMap = new Map();
+const effectsToStorageEntityMap = new Map();
 
 /**
- * Throws new `Error` if conditions are right.
+ * Throws new `Error` if the condition evaluates to `true`.
  * Used to perform various validations.
  *
  * @param {Boolean} conditionToThrow If `true`, a new `Error` will be thrown.
@@ -24,7 +23,7 @@ const throwError = (conditionToThrow, msg) => {
  * Returns the type of the variable lowercased.
  *
  * @param {*} variable The variable for which the type is determined.
- * @returns {*} One of {`object`, `array`, `function`, `date`, `regexp`, `symbol`, `number`, `string`, `boolean`, `null`, `undefined`}.
+ * @returns {*} One of [`object`, `array`, `function`, `date`, `regexp`, `symbol`, `number`, `string`, `boolean`, `null`, `undefined`].
  */
 const getVariableType = variable => {
   let toStr = Object.prototype.toString.call(variable);
@@ -33,22 +32,22 @@ const getVariableType = variable => {
 };
 
 /**
- * Combines all the reducers in the app under the same umbrella.
- * A reducer export must contain the following two exports:
+ * Combines all the Storage Entities in the app under the same umbrella.
+ * A Storage Entity file must contain the following two exports:
  *
  * {
  *    initialState,
  *    effects
  * }
  *
- * `initialState` represents the default value for that slice of state.
+ * `initialState` represents the initial value in the global state for that Storage Entity.
  * `effects` represents an {Object} whose keys are action names and values are the associated effect functions.
  *
  * The effect function has the following signature: (state, payload).
- * `state` represents the current state of the value we apply the effect for.
+ * `state` represents the current value of the Storage Entity we apply the effect for.
  * `payload` represents the data passed through the system when a certain action is called.
  *
- * E.g. of a `user` reducer, which contains an action to add a new user:
+ * E.g. of a `user` Storage Entity implementation, which contains an action to add a new user:
  *
  * {
  *    initialState: [],
@@ -57,31 +56,31 @@ const getVariableType = variable => {
  *        ADD_USER: (state, payload) => [...state, payload]
  *    }
  * }
- * @param {Object} reducersObj An object containing all the reducers in the app.
+ * @param {Object} storageEntitiesObj An object containing all the Storage Entities in the app.
  * @returns {Object} An object containing the global initial state of the system and all the effects associated with it.
  */
-const combineReducers = reducersObj => {
-  // Verify that `reducersObj` is an {Object}.
+const combineStorageEntities = storageEntitiesObj => {
+  // Verify that `storageEntitiesObj` is an {Object}.
   throwError(
-    getVariableType(reducersObj) !== 'object',
-    `The argument passed to the 'combineReducers' function must be an Object.`
+    getVariableType(storageEntitiesObj) !== 'object',
+    `The argument passed to the 'combineStorageEntities' function must be an Object.`
   );
 
   let globalEffects = {};
   let globalInitialState = {};
 
-  Object.keys(reducersObj).forEach(key => {
-    const currentReducer = reducersObj[key];
+  Object.keys(storageEntitiesObj).forEach(key => {
+    const currentStorageEntity = storageEntitiesObj[key];
 
-    // Verify that `currentReducer` is an {Object}.
+    // Verify that `currentStorageEntity` is an {Object}.
     throwError(
-      getVariableType(currentReducer) !== 'object',
+      getVariableType(currentStorageEntity) !== 'object',
       `Expected ${key} to be an Object.`
     );
 
-    const { effects, initialState } = currentReducer;
+    const { effects, initialState } = currentStorageEntity;
 
-    // Verify that `currentReducer` has `effects` and `initialState` props.
+    // Verify that `currentStorageEntity` has `effects` and `initialState` props.
     throwError(
       !effects || !initialState,
       `Expected ${key} to have 'effects' and 'initialState' props.`
@@ -102,11 +101,11 @@ const combineReducers = reducersObj => {
       `Expected '${key}.initialState' to be a primitive type, Object or Array.`
     );
 
-    globalEffects = { ...globalEffects, ...currentReducer.effects };
-    globalInitialState[key] = currentReducer.initialState;
+    globalEffects = { ...globalEffects, ...currentStorageEntity.effects };
+    globalInitialState[key] = currentStorageEntity.initialState;
 
-    Object.keys(currentReducer.effects).forEach(effectKey =>
-      effectsToNameMap.set(effectKey, key)
+    Object.keys(currentStorageEntity.effects).forEach(effectKey =>
+      effectsToStorageEntityMap.set(effectKey, key)
     );
   });
 
@@ -123,22 +122,22 @@ let reducerFn = null;
 /**
  * Creates the application store.
  *
- * @param {Object} appReducer The combination of all the reducers in the app.
+ * @param {Object} systemStorage The combination of all the Storage Entities in the app.
  * @returns {Object} Returns the current global state and a `dispatch` method used to broadcast actions throughout the system.
  */
-const createStore = appReducer => {
-  // Verify that `appReducer` is an {Object}.
+const createStore = systemStorage => {
+  // Verify that `systemStorage` is an {Object}.
   throwError(
-    getVariableType(appReducer) !== 'object',
+    getVariableType(systemStorage) !== 'object',
     `The argument passed to the 'createStore' function must be an Object.`
   );
 
-  const { globalEffects, globalInitialState } = appReducer;
+  const { globalEffects, globalInitialState } = systemStorage;
 
-  // Verify that `appReducer` has `globalEffects` and `globalInitialState` props.
+  // Verify that `systemStorage` has `globalEffects` and `globalInitialState` props.
   throwError(
     !globalEffects || !globalInitialState,
-    `Expected ${appReducer} to have 'globalEffects' and 'globalInitialState' props.`
+    `Expected ${systemStorage} to have 'globalEffects' and 'globalInitialState' props.`
   );
 
   if (!reducerFn) {
@@ -172,8 +171,8 @@ const createStore = appReducer => {
         `Expected 'payload' to be a primitive type, Object or Array.`
       );
 
-      const fn = appReducer.globalEffects[type];
-      const key = effectsToNameMap.get(type);
+      const fn = systemStorage.globalEffects[type];
+      const key = effectsToStorageEntityMap.get(type);
 
       return fn && typeof fn === 'function'
         ? { ...state, [key]: fn(state[key], payload) }
@@ -183,7 +182,7 @@ const createStore = appReducer => {
 
   const [state, _dispatch] = useReducer(
     reducerFn,
-    appReducer.globalInitialState
+    systemStorage.globalInitialState
   );
 
   if (process.env.NODE_ENV === 'development') {
@@ -203,16 +202,16 @@ const createStore = appReducer => {
 /**
  * Creates the application's main `Provider` component that serves the store via Context API.
  *
- * @param {Object} appReducer The combination of all the reducers in the app.
+ * @param {Object} systemStorage The combination of all the Storage Entities in the app.
  */
-const createProvider = appReducer => ({ children }) => {
-  const store = createStore(appReducer);
+const createProvider = systemStorage => ({ children }) => {
+  const store = createStore(systemStorage);
   return React.createElement(Ctx.Provider, { value: store }, children);
 };
 
 /**
  * Creates a Higher Order Function (HOF) that can be later applied to a React component.
- * The result of the function applied is a wrapper component that will have the important slice of the state automatically injected as well as the `dispatch` function.
+ * The result of applying the function is a wrapper component that will have the important slice of the global state automatically injected as well as the `dispatch` function.
  *
  * @param {Object} mapStateToProps An object defining which slice of the global state is important to the current component.
  * @returns {Function} A HOF to apply to a React component.
@@ -240,4 +239,4 @@ const connect = mapStateToProps => Component => {
   return EnhancedComponent;
 };
 
-export { createProvider, connect, combineReducers };
+export { createProvider, connect, combineStorageEntities };
