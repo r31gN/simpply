@@ -203,7 +203,7 @@ const createStore = systemStorage => {
  * Creates the application's main `Provider` component that serves the store via Context API.
  *
  * @param {Object} systemStorage The combination of all the Storage Entities in the app.
- * @return {Function} Returns the app's `Provider` component.
+ * @return {React.FunctionComponentElement} Returns the app's `Provider` component.
  */
 const createProvider = systemStorage => ({ children }) => {
   const store = createStore(systemStorage);

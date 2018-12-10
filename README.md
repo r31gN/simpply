@@ -115,7 +115,7 @@ This function returns an object containing the global initial state of the syste
 ```javascript
 /**
  * @param {Object} systemStorage The combination of all the Storage Entities in the app.
- * @return {Function} Returns the app's `Provider` component.
+ * @return {React.FunctionComponentElement} Returns the app's `Provider` component.
  */
 ```
 
