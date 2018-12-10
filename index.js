@@ -203,6 +203,7 @@ const createStore = systemStorage => {
  * Creates the application's main `Provider` component that serves the store via Context API.
  *
  * @param {Object} systemStorage The combination of all the Storage Entities in the app.
+ * @return {Function} Returns the app's `Provider` component.
  */
 const createProvider = systemStorage => ({ children }) => {
   const store = createStore(systemStorage);
@@ -211,9 +212,9 @@ const createProvider = systemStorage => ({ children }) => {
 
 /**
  * Creates a Higher Order Function (HOF) that can be later applied to a React component.
- * The result of applying the function is a wrapper component that will have the important slice of the global state automatically injected as well as the `dispatch` function.
+ * The result of applying the function is a wrapper component that will have a slice of the global state automatically injected as well as the `dispatch` function.
  *
- * @param {Object} mapStateToProps An object defining which slice of the global state is important to the current component.
+ * @param {Object} mapStateToProps An object defining which slice of the global state will be injected in the wrapper component.
  * @returns {Function} A HOF to apply to a React component.
  */
 const connect = mapStateToProps => Component => {

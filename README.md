@@ -2,6 +2,18 @@
 
 A simple state management library for React app, built on top of the Context &amp; Hooks APIs.
 
+### Table of contents
+
+- [simpply](#simpply)
+    - [Table of contents](#table-of-contents)
+    - [Installation](#installation)
+    - [Defining the notion of a _Storage Entity_](#defining-the-notion-of-a-storage-entity)
+    - [Why are _Storage Entities_ important](#why-are-storage-entities-important)
+    - [Documentation](#documentation)
+      - [`createSystemStorage`](#createsystemstorage)
+      - [`createProvider`](#createprovider)
+      - [`connect`](#connect)
+
 ### Installation
 
 Run `npm i simpply`.
@@ -44,7 +56,14 @@ An `effect` is a function that has the following signature: `(state, payload)`. 
 
 #### `createSystemStorage`
 
-Combines all the `Storage Entities` in the app under the same umbrella. A aStorage Entitya file must contain the following two exports:
+```javascript
+/**
+ * @param {Object} storageEntitiesObj An object containing all the Storage Entities in the app.
+ * @returns {Object} An object containing the global initial state of the system and all the effects associated with it.
+ */
+```
+
+Combines all the `Storage Entities` in the app under the same umbrella. A `Storage Entity` file must contain the following two exports:
 
 ```javascript
 {
@@ -59,7 +78,7 @@ E.g. of a `User Storage Entity` implementation with an effect to add a new user,
 ```javascript
 // In `users.js`
 
-{
+export default {
   initialState: [],
   effects: {
     ADD_USER: (state, payload) => [...state, payload]
@@ -68,7 +87,7 @@ E.g. of a `User Storage Entity` implementation with an effect to add a new user,
 
 // In `puppies.js`
 
-{
+export default {
   initialState: [],
   effects: {
     DELETE_PUPPY: (state, payload) => [...state, payload]
@@ -86,4 +105,68 @@ export default createSystemStorage({
 });
 ```
 
-The end result of applying `createSystemStorage` will then be used to create the application's main `Provider`.
+This function returns an object containing the global initial state of the system and all the effects associated with it. The end result of applying `createSystemStorage` will then be used to create the application's main `Provider`.
+
+#### `createProvider`
+
+```javascript
+/**
+ * @param {Object} systemStorage The combination of all the Storage Entities in the app.
+ * @return {Function} Returns the app's `Provider` component.
+ */
+```
+
+Creates the application's main `Provider` component that serves the resulting store via Context API.
+
+E.g. of using `createProvider`:
+
+```javascript
+// In index.js
+
+import { createProvider } from 'simpply';
+import systemStorage from '/path/to/systemStorage.js';
+
+const AppProvider = createProvider(systemStorage);
+
+ReactDOM.render(
+  <AppProvider>...</AppProvider>,
+  document.getElementById('root')
+);
+```
+
+#### `connect`
+
+```javascript
+/**
+ * @param {Object} mapStateToProps An object defining which slice of the global state will be injected in the wrapper component.
+ * @returns {Function} A HOF to apply to a React component.
+ */
+```
+
+Creates a Higher Order Function (HOF) that can be later applied to a React component. The result of applying the function is a wrapper component that will have a slice of the global state automatically injected as well as the `dispatch` function.
+
+E.g. of using `connect` for a PuppiesList component:
+
+```javascript
+// In `PuppiesList.js`
+
+import { connect } from 'simpply';
+
+const PuppiesList = ({ puppies }) => (
+  <ul>
+    {puppies.map(puppy => (
+      <li key={puppy.id}>{puppy.name}</li>
+    ))}
+  </ul>
+);
+
+const mapStateToProps = state => ({
+  // This is where we define that `PuppiesList` care only about
+  // the `puppies` property from the global state
+  puppies: state.puppies
+});
+
+export default connect(mapStateToProps)(PuppiesList);
+```
+
+The `connect` function is similar to Redux's `connect` functionality.
