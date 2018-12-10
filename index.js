@@ -41,13 +41,13 @@ const getVariableType = variable => {
  * }
  *
  * `initialState` represents the initial value in the global state for that Storage Entity.
- * `effects` represents an {Object} whose keys are action names and values are the associated effect functions.
+ * `effects` represents an {Object} whose keys are effect names and values are the associated effect functions.
  *
  * The effect function has the following signature: (state, payload).
  * `state` represents the current value of the Storage Entity we apply the effect for.
  * `payload` represents the data passed through the system when a certain action is called.
  *
- * E.g. of a `user` Storage Entity implementation, which contains an action to add a new user:
+ * E.g. of a `User Storage Entity` implementation, which contains an effect to add a new user:
  *
  * {
  *    initialState: [],
@@ -59,11 +59,11 @@ const getVariableType = variable => {
  * @param {Object} storageEntitiesObj An object containing all the Storage Entities in the app.
  * @returns {Object} An object containing the global initial state of the system and all the effects associated with it.
  */
-const combineStorageEntities = storageEntitiesObj => {
+const createSystemStorage = storageEntitiesObj => {
   // Verify that `storageEntitiesObj` is an {Object}.
   throwError(
     getVariableType(storageEntitiesObj) !== 'object',
-    `The argument passed to the 'combineStorageEntities' function must be an Object.`
+    `The argument passed to the 'createSystemStorage' function must be an Object.`
   );
 
   let globalEffects = {};
@@ -239,4 +239,4 @@ const connect = mapStateToProps => Component => {
   return EnhancedComponent;
 };
 
-export { createProvider, connect, combineStorageEntities };
+export { createProvider, connect, createSystemStorage };
