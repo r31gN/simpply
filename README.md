@@ -174,7 +174,28 @@ const mapStateToProps = state => ({
 export default connect(mapStateToProps)(PuppiesList);
 ```
 
-The `connect` function is similar to Redux's `connect` functionality.
+The `connect` function is similar to Redux's `connect` functionality. However, it does not need a `mapDispatchToProps` function. `dispatch` is automatically injected in the connected component and `simpply` encourages making use of it directly. Below you have an example of dispatching, as a result of a successful async call.
+
+```javascript
+// In MyComponent.js
+
+const MyComponent = ({ dispatch }) => {
+  useEffect(() => {
+    (async () => {
+      const res = await fetch('/path/to/url');
+      const json = await res.json();
+
+      // Just simply dispatch an action with the effect name and the payload
+      dispatch({
+        type: 'EFFECT_NAME',
+        payload: json
+      });
+    })();
+  }, []);
+
+  return <div>{/* Some markup here ... */}</div>;
+};
+```
 
 ### Examples
 
