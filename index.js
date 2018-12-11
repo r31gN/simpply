@@ -1,4 +1,4 @@
-import React, { useReducer, useContext } from 'react';
+import React, { useReducer, useContext, useRef, useEffect } from 'react';
 
 /**
  * Keeps local track between the effect and the Storage Entity they belong to.
@@ -185,8 +185,17 @@ const createStore = systemStorage => {
     systemStorage.globalInitialState
   );
 
+  const prevState = useRef();
+
+  useEffect(() => {
+    prevState.current = state;
+  });
+
   if (process.env.NODE_ENV === 'development') {
-    console.log(`State: `, state);
+    if (prevState.current) {
+      console.log(`Previous state: `, prevState.current);
+      console.log(`Current state: `, state);
+    }
 
     dispatch = action => {
       console.log(`Triggered '${action.type}'.`);
