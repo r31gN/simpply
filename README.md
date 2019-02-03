@@ -93,7 +93,7 @@ export default {
 export default {
   initialState: [],
   effects: {
-    DELETE_PUPPY: (state, payload) => [...state, payload]
+    ADD_PUPPY: (state, payload) => [...state, payload]
   }
 }
 
@@ -131,10 +131,7 @@ import systemStorage from '/path/to/systemStorage.js';
 
 const AppProvider = createProvider(systemStorage);
 
-ReactDOM.render(
-  <AppProvider>...</AppProvider>,
-  document.getElementById('root')
-);
+ReactDOM.render(<AppProvider>...</AppProvider>, document.getElementById('root'));
 ```
 
 #### `connect`

@@ -87,10 +87,7 @@ const createSystemStorage = storageEntitiesObj => {
     );
 
     // Verify that `effects` prop is an {Object}.
-    throwError(
-      getVariableType(effects) !== 'object',
-      `Expected '${key}.effects' to be an Object.`
-    );
+    throwError(getVariableType(effects) !== 'object', `Expected '${key}.effects' to be an Object.`);
 
     // Verify that `initialState` prop is not a {Function}, {Date}, {Regexp} or {Symbol}.
     throwError(
@@ -143,24 +140,15 @@ const createStore = systemStorage => {
   if (!reducerFn) {
     reducerFn = (state, action) => {
       // Verify that `action` is an {Object}.
-      throwError(
-        getVariableType(action) !== 'object',
-        `Expected ${action} to be an Object.`
-      );
+      throwError(getVariableType(action) !== 'object', `Expected ${action} to be an Object.`);
 
       const { type, payload } = action;
 
       // Verify that `action` has `type` and `payload` props.
-      throwError(
-        !type || !payload,
-        `Expected ${action} to have 'type' and 'payload' props.`
-      );
+      throwError(!type || !payload, `Expected ${action} to have 'type' and 'payload' props.`);
 
       // Verify that `type` prop is a {String}.
-      throwError(
-        getVariableType(type) !== 'string',
-        `Expected ${type} to be an String.`
-      );
+      throwError(getVariableType(type) !== 'string', `Expected ${type} to be an String.`);
 
       // Verify that `payload` prop is not a {Function}, {Date}, {Regexp} or {Symbol}.
       throwError(
@@ -174,16 +162,11 @@ const createStore = systemStorage => {
       const fn = systemStorage.globalEffects[type];
       const key = effectsToStorageEntityMap.get(type);
 
-      return fn && typeof fn === 'function'
-        ? { ...state, [key]: fn(state[key], payload) }
-        : state;
+      return fn && typeof fn === 'function' ? { ...state, [key]: fn(state[key], payload) } : state;
     };
   }
 
-  const [state, _dispatch] = useReducer(
-    reducerFn,
-    systemStorage.globalInitialState
-  );
+  const [state, _dispatch] = useReducer(reducerFn, systemStorage.globalInitialState);
 
   const prevState = useRef();
 

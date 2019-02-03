@@ -23,6 +23,6 @@
   },
   "homepage": "https://github.com/r31gN/simpply#readme",
   "peerDependencies": {
-    "react": "^16.7.0-alpha.2"
+    "react": "^16.8.0-alpha.1"
   }
 }
