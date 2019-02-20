@@ -1,4 +1,10 @@
-import React, { useReducer, useContext, useRef, useEffect } from 'react';
+import React, {
+  useReducer,
+  useContext,
+  useRef,
+  useEffect,
+  useMemo
+} from 'react';
 
 /**
  * Keeps local track between the effect and the Storage Entity they belong to.
@@ -197,11 +203,16 @@ const createStore = systemStorage => {
       console.log(`Current state: `, state);
     }
 
-    dispatch = action => {
-      console.log(`Triggered '${action.type}'.`);
-      _dispatch(action);
-    };
+    // `dispatch` needs to be memoized to avoid re-renders.
+    dispatch = useMemo(
+      () => action => {
+        console.log(`Triggered '${action.type}'.`);
+        _dispatch(action);
+      },
+      [_dispatch]
+    );
   } else {
+    // `_dispatch` is never returned as a new function, so there is no danger of re-rendering here.
     dispatch = _dispatch;
   }
 
