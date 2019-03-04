@@ -1,6 +1,6 @@
 {
   "name": "simpply",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A simple state management library for React app, built on top of the Context & Hooks APIs.",
   "main": "index.js",
   "scripts": {
