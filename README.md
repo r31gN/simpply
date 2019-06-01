@@ -1,6 +1,6 @@
 # simpply
 
-A simple state management library for React app, built on top of the Context &amp; Hooks APIs.
+A simple state management library for React app, built on top of the Context &amp; Hooks APIs. Now with TypeScript support.
 
 ### Table of contents
 
@@ -196,7 +196,7 @@ const MyComponent = ({ dispatch }) => {
 
 ### Examples
 
-For an example that uses `simpply`, check out [this repo](https://github.com/r31gN/react-state-management).
+For an example that uses `simpply`, check out [this repo](https://github.com/r31gN/react-state-management). And if you want to see the TypeScript version, check out [this repo](https://github.com/dragomirtitian/react-state-management-ts).
 
 ### Author
 
