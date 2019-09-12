@@ -70,7 +70,8 @@ Combines all the `Storage Entities` in the app under the same umbrella. A `Stora
 
 ```javascript
 {
-  initialState, effects;
+  initialState,
+  effects;
 }
 ```
 
@@ -115,7 +116,7 @@ This function returns an object containing the global initial state of the syste
 ```javascript
 /**
  * @param {Object} systemStorage The combination of all the Storage Entities in the app.
- * * @param {Object} options A object defining the configuration for `simpply`.
+ * @param {Object} options A object defining the configuration for `simpply`.
  * @return {React.FunctionComponentElement} Returns the app's `Provider` component.
  */
 ```
