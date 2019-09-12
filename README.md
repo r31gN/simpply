@@ -115,6 +115,7 @@ This function returns an object containing the global initial state of the syste
 ```javascript
 /**
  * @param {Object} systemStorage The combination of all the Storage Entities in the app.
+ * * @param {Object} options A object defining the configuration for `simpply`.
  * @return {React.FunctionComponentElement} Returns the app's `Provider` component.
  */
 ```
@@ -129,16 +130,27 @@ E.g. of using `createProvider`:
 import { createProvider } from 'simpply';
 import systemStorage from '/path/to/systemStorage.js';
 
-const AppProvider = createProvider(systemStorage);
+const AppProvider = createProvider(systemStorage, {
+  logging: false
+});
 
 ReactDOM.render(<AppProvider>...</AppProvider>, document.getElementById('root'));
+```
+
+The `options` object looks like this:
+
+```javascript
+{
+  // [Boolean] Specifies if logging for the last triggered action, previous & current state is enabled. Defaults to `true`.
+  logging: true
+}
 ```
 
 #### `connect`
 
 ```javascript
 /**
- * @param {Object} mapStateToProps An object defining which slice of the global state will be injected in the wrapper component.
+ * @param {Function | Null} mapStateToProps A function returning an object defining which slice of the global state will be injected in the wrapper component. If `mapStateToProps` is `null`, only `dispatch` will be injected.
  * @returns {Function} A HOF to apply to a React component.
  */
 ```

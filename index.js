@@ -88,8 +88,8 @@ const createSystemStorage = storageEntitiesObj => {
 
     // Verify that `currentStorageEntity` has `effects` and `initialState` props.
     throwError(
-      !effects || !initialState,
-      `Expected ${key} to have 'effects' and 'initialState' props.`
+      !effects || initialState === undefined,
+      `Expected ${key} to have 'effects' and 'initialState' pros.`
     );
 
     // Verify that `effects` prop is an {Object}.
@@ -129,13 +129,20 @@ let reducerFn = null;
  * Creates the application store.
  *
  * @param {Object} systemStorage The combination of all the Storage Entities in the app.
+ * @param {Object} options A object defining the configuration for `simpply`. *
  * @returns {Object} Returns the current global state and a `dispatch` method used to broadcast actions throughout the system.
  */
-const createStore = systemStorage => {
+const createStore = (systemStorage, options) => {
   // Verify that `systemStorage` is an {Object}.
   throwError(
     getVariableType(systemStorage) !== 'object',
-    `The argument passed to the 'createStore' function must be an Object.`
+    `The 'systemStorage' argument passed to the 'createStore' function must be an Object.`
+  );
+
+  // Verify that `options` is an {Object}.
+  throwError(
+    getVariableType(options) !== 'object',
+    `The 'options' argument passed to the 'createStore' function must be an Object.`
   );
 
   const { globalEffects, globalInitialState } = systemStorage;
@@ -198,7 +205,7 @@ const createStore = systemStorage => {
   });
 
   if (process.env.NODE_ENV === 'development') {
-    if (prevState.current) {
+    if (prevState.current && options.logging) {
       console.log(`Previous state: `, prevState.current);
       console.log(`Current state: `, state);
     }
@@ -206,7 +213,10 @@ const createStore = systemStorage => {
     // `dispatch` needs to be memoized to avoid re-renders.
     dispatch = useMemo(
       () => action => {
-        console.log(`Triggered '${action.type}'.`);
+        if (options.logging) {
+          console.log(`Triggered '${action.type}'.`);
+        }
+
         _dispatch(action);
       },
       [_dispatch]
@@ -223,10 +233,16 @@ const createStore = systemStorage => {
  * Creates the application's main `Provider` component that serves the store via Context API.
  *
  * @param {Object} systemStorage The combination of all the Storage Entities in the app.
+ * @param {Object} options A object defining the configuration for `simpply`.
  * @return {React.FunctionComponentElement} Returns the app's `Provider` component.
  */
-const createProvider = systemStorage => ({ children }) => {
-  const store = createStore(systemStorage);
+const createProvider = (
+  systemStorage,
+  options = {
+    logging: true
+  }
+) => ({ children }) => {
+  const store = createStore(systemStorage, options);
   return React.createElement(Ctx.Provider, { value: store }, children);
 };
 
@@ -234,7 +250,7 @@ const createProvider = systemStorage => ({ children }) => {
  * Creates a Higher Order Function (HOF) that can be later applied to a React component.
  * The result of applying the function is a wrapper component that will have a slice of the global state automatically injected as well as the `dispatch` function.
  *
- * @param {Object} mapStateToProps An object defining which slice of the global state will be injected in the wrapper component.
+ * @param {Function | Null} mapStateToProps A function returning an object defining which slice of the global state will be injected in the wrapper component. If `mapStateToProps` is `null`, only `dispatch` will be injected.
  * @returns {Function} A HOF to apply to a React component.
  */
 const connect = mapStateToProps => Component => {
@@ -242,12 +258,23 @@ const connect = mapStateToProps => Component => {
 
   const EnhancedComponent = props => {
     const { state, dispatch } = useContext(Ctx);
-    const slicedState = mapStateToProps(state);
+    let slicedState = {};
+
+    // Verify that `mapStateToProps` is eiterh a {Function} or {Null}.
+    throwError(
+      getVariableType(mapStateToProps) !== 'function' &&
+        getVariableType(mapStateToProps) !== 'null',
+      `'mapStateToProps' must be either a Function or Null.`
+    );
+
+    if (mapStateToProps !== null) {
+      slicedState = mapStateToProps(state);
+    }
 
     // Verify that `slicedState` is an {Object}.
     throwError(
       getVariableType(slicedState) !== 'object',
-      `The result of calling 'mapStateToProps' function must be an Object.`
+      `The result of calling 'mapStateToProps' function must be an Object. 'mapStateToProps' can also be Null, in which case only 'dispatch' will be injected.`
     );
 
     return React.createElement(MemoComponent, {
