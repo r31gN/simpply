@@ -3,7 +3,6 @@
   "version": "2.1.0",
   "description": "A simple state management library for React app, built on top of the Context & Hooks APIs.",
   "main": "index.js",
-  "types": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -24,9 +23,6 @@
   },
   "homepage": "https://github.com/r31gN/simpply#readme",
   "peerDependencies": {
-    "react": "^16.8.0"
-  },
-  "devDependencies": {
-    "@types/react": "^16.8.18"
+    "react": "^16.9.0"
   }
 }
