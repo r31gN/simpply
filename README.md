@@ -209,7 +209,7 @@ const MyComponent = ({ dispatch }) => {
 
 ### Examples
 
-For an example that uses `simpply`, check out [this repo](https://github.com/r31gN/react-state-management). And if you want to see the TypeScript version, check out [this repo](https://github.com/dragomirtitian/react-state-management-ts).
+For an example that uses `simpply`, check out [this repo](https://github.com/r31gN/react-state-management).
 
 ### Author
 
