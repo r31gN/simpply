@@ -1,6 +1,6 @@
 # simpply
 
-A simple state management library for React app, built on top of the Context &amp; Hooks APIs. Now with TypeScript support.
+A simple state management library for React app, built on top of the Context &amp; Hooks APIs.
 
 ### Table of contents
 
@@ -70,8 +70,10 @@ Combines all the `Storage Entities` in the app under the same umbrella. A `Stora
 
 ```javascript
 {
-  initialState,
-  effects;
+  // Can be any primitive type, except `undefined` and `Symbol`
+  initialState: ...,
+  // Collection of effects
+  effects: ...;
 }
 ```
 
