@@ -4,7 +4,7 @@ import React, {
   useRef,
   useEffect,
   useMemo
-} from 'react';
+} from "react";
 
 /**
  * Keeps local track between the effect and the Storage Entity they belong to.
@@ -34,7 +34,7 @@ const throwError = (conditionToThrow, msg) => {
 const getVariableType = variable => {
   let toStr = Object.prototype.toString.call(variable);
   toStr = toStr.substring(1, toStr.length - 1);
-  return toStr.split(' ')[1].toLowerCase();
+  return toStr.split(" ")[1].toLowerCase();
 };
 
 /**
@@ -68,7 +68,7 @@ const getVariableType = variable => {
 const createSystemStorage = storageEntitiesObj => {
   // Verify that `storageEntitiesObj` is an {Object}.
   throwError(
-    getVariableType(storageEntitiesObj) !== 'object',
+    getVariableType(storageEntitiesObj) !== "object",
     `The argument passed to the 'createSystemStorage' function must be an Object.`
   );
 
@@ -80,7 +80,7 @@ const createSystemStorage = storageEntitiesObj => {
 
     // Verify that `currentStorageEntity` is an {Object}.
     throwError(
-      getVariableType(currentStorageEntity) !== 'object',
+      getVariableType(currentStorageEntity) !== "object",
       `Expected ${key} to be an Object.`
     );
 
@@ -94,16 +94,16 @@ const createSystemStorage = storageEntitiesObj => {
 
     // Verify that `effects` prop is an {Object}.
     throwError(
-      getVariableType(effects) !== 'object',
+      getVariableType(effects) !== "object",
       `Expected '${key}.effects' to be an Object.`
     );
 
     // Verify that `initialState` prop is not a {Function}, {Date}, {Regexp} or {Symbol}.
     throwError(
-      getVariableType(initialState) === 'function' ||
-        getVariableType(initialState) === 'date' ||
-        getVariableType(initialState) === 'regexp' ||
-        getVariableType(initialState) === 'symbol',
+      getVariableType(initialState) === "function" ||
+        getVariableType(initialState) === "date" ||
+        getVariableType(initialState) === "regexp" ||
+        getVariableType(initialState) === "symbol",
       `Expected '${key}.initialState' to be a primitive type, Object or Array.`
     );
 
@@ -135,13 +135,13 @@ let reducerFn = null;
 const createStore = (systemStorage, options) => {
   // Verify that `systemStorage` is an {Object}.
   throwError(
-    getVariableType(systemStorage) !== 'object',
+    getVariableType(systemStorage) !== "object",
     `The 'systemStorage' argument passed to the 'createStore' function must be an Object.`
   );
 
   // Verify that `options` is an {Object}.
   throwError(
-    getVariableType(options) !== 'object',
+    getVariableType(options) !== "object",
     `The 'options' argument passed to the 'createStore' function must be an Object.`
   );
 
@@ -157,37 +157,36 @@ const createStore = (systemStorage, options) => {
     reducerFn = (state, action) => {
       // Verify that `action` is an {Object}.
       throwError(
-        getVariableType(action) !== 'object',
+        getVariableType(action) !== "object",
         `Expected ${action} to be an Object.`
       );
 
       const { type, payload } = action;
 
-      // Verify that `action` has `type` and `payload` props.
-      throwError(
-        !type || !payload,
-        `Expected ${action} to have 'type' and 'payload' props.`
-      );
+      // Verify that `action` has `type` prop.
+      throwError(!type, `Expected ${action} to have 'type' prop.`);
 
       // Verify that `type` prop is a {String}.
       throwError(
-        getVariableType(type) !== 'string',
+        getVariableType(type) !== "string",
         `Expected ${type} to be an String.`
       );
 
-      // Verify that `payload` prop is not a {Function}, {Date}, {Regexp} or {Symbol}.
-      throwError(
-        getVariableType(payload) === 'function' ||
-          getVariableType(payload) === 'date' ||
-          getVariableType(payload) === 'regexp' ||
-          getVariableType(payload) === 'symbol',
-        `Expected 'payload' to be a primitive type, Object or Array.`
-      );
+      if (payload) {
+        // Verify that `payload` prop is not a {Function}, {Date}, {Regexp} or {Symbol}.
+        throwError(
+          getVariableType(payload) === "function" ||
+            getVariableType(payload) === "date" ||
+            getVariableType(payload) === "regexp" ||
+            getVariableType(payload) === "symbol",
+          `Expected 'payload' to be a primitive type, Object or Array.`
+        );
+      }
 
       const fn = systemStorage.globalEffects[type];
       const key = effectsToStorageEntityMap.get(type);
 
-      return fn && typeof fn === 'function'
+      return fn && typeof fn === "function"
         ? { ...state, [key]: fn(state[key], payload) }
         : state;
     };
@@ -204,7 +203,7 @@ const createStore = (systemStorage, options) => {
     prevState.current = state;
   });
 
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === "development") {
     if (prevState.current && options.logging) {
       console.log(`Previous state: `, prevState.current);
       console.log(`Current state: `, state);
@@ -262,8 +261,8 @@ const connect = mapStateToProps => Component => {
 
     // Verify that `mapStateToProps` is eiterh a {Function} or {Null}.
     throwError(
-      getVariableType(mapStateToProps) !== 'function' &&
-        getVariableType(mapStateToProps) !== 'null',
+      getVariableType(mapStateToProps) !== "function" &&
+        getVariableType(mapStateToProps) !== "null",
       `'mapStateToProps' must be either a Function or Null.`
     );
 
@@ -273,7 +272,7 @@ const connect = mapStateToProps => Component => {
 
     // Verify that `slicedState` is an {Object}.
     throwError(
-      getVariableType(slicedState) !== 'object',
+      getVariableType(slicedState) !== "object",
       `The result of calling 'mapStateToProps' function must be an Object. 'mapStateToProps' can also be Null, in which case only 'dispatch' will be injected.`
     );
 
