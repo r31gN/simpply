@@ -150,7 +150,7 @@ The `options` object looks like this:
   // [Boolean] Specifies if logging for the last triggered action, previous & current state is enabled. Defaults to `true` in `development` and `false` otherwise.
   logging: true,
   // [Boolean] Specifies if `getState` method is attached to `window` for debugging purposes. Defaults to `true` in `development` and `false` otherwise.
-  logging: true,
+  globallyDebugState: true,
 }
 ```
 
