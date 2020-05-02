@@ -5,17 +5,17 @@ A simple state management library for React app, built on top of the Context &am
 ### Table of contents
 
 - [simpply](#simpply)
-    - [Table of contents](#table-of-contents)
-    - [Installation](#installation)
-    - [Defining the notion of a _Storage Entity_](#defining-the-notion-of-a-storage-entity)
-    - [Why are _Storage Entities_ important](#why-are-storage-entities-important)
-    - [Documentation](#documentation)
-      - [`createSystemStorage`](#createsystemstorage)
-      - [`createProvider`](#createprovider)
-      - [`connect`](#connect)
-    - [Examples](#examples)
-    - [Author](#author)
-    - [License](#license)
+  - [Table of contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Defining the notion of a _Storage Entity_](#defining-the-notion-of-a-storage-entity)
+  - [Why are _Storage Entities_ important](#why-are-storage-entities-important)
+  - [Documentation](#documentation)
+    - [`createSystemStorage`](#createsystemstorage)
+    - [`createProvider`](#createprovider)
+    - [`connect`](#connect)
+  - [Examples](#examples)
+  - [Author](#author)
+  - [License](#license)
 
 ### Installation
 
@@ -40,12 +40,12 @@ Below you have an example of a `User Storage Entity` that could be separated in 
 const addUser = (state, payload) => [...state, payload];
 
 const effects = {
-  ADD_USER: addUser
+  ADD_USER: addUser,
 };
 
 export default {
   initialState: [],
-  effects
+  effects,
 };
 ```
 
@@ -87,18 +87,18 @@ E.g. of a `User Storage Entity` implementation with an effect to add a new user,
 export default {
   initialState: [],
   effects: {
-    ADD_USER: (state, payload) => [...state, payload]
-  }
-}
+    ADD_USER: (state, payload) => [...state, payload],
+  },
+};
 
 // In `puppies.js`
 
 export default {
   initialState: [],
   effects: {
-    ADD_PUPPY: (state, payload) => [...state, payload]
-  }
-}
+    ADD_PUPPY: (state, payload) => [...state, payload],
+  },
+};
 
 // Then in a separate file (e.g.: `systemStorage.js`), combine the two:
 
@@ -107,7 +107,7 @@ import puppies from '/path/to/puppies.js';
 
 export default createSystemStorage({
   users,
-  puppies
+  puppies,
 });
 ```
 
@@ -134,18 +134,23 @@ import { createProvider } from 'simpply';
 import systemStorage from '/path/to/systemStorage.js';
 
 const AppProvider = createProvider(systemStorage, {
-  logging: false
+  logging: false,
 });
 
-ReactDOM.render(<AppProvider>...</AppProvider>, document.getElementById('root'));
+ReactDOM.render(
+  <AppProvider>...</AppProvider>,
+  document.getElementById('root')
+);
 ```
 
 The `options` object looks like this:
 
 ```javascript
 {
-  // [Boolean] Specifies if logging for the last triggered action, previous & current state is enabled. Defaults to `true`.
-  logging: true
+  // [Boolean] Specifies if logging for the last triggered action, previous & current state is enabled. Defaults to `true` in `development` and `false` otherwise.
+  logging: true,
+  // [Boolean] Specifies if `getState` method is attached to `window` for debugging purposes. Defaults to `true` in `development` and `false` otherwise.
+  logging: true,
 }
 ```
 
@@ -169,18 +174,18 @@ import { connect } from 'simpply';
 
 const PuppiesList = ({ puppies }) => (
   <ul>
-    {puppies.map(puppy => (
+    {puppies.map((puppy) => (
       <li key={puppy.id}>{puppy.name}</li>
     ))}
   </ul>
 );
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   /*
    * This is where we define that `PuppiesList` cares only about
    * the `puppies` property from the global state.
    */
-  puppies: state.puppies
+  puppies: state.puppies,
 });
 
 export default connect(mapStateToProps)(PuppiesList);
@@ -200,7 +205,7 @@ const MyComponent = ({ dispatch }) => {
       // Just simply dispatch an action with the effect name and the payload
       dispatch({
         type: 'EFFECT_NAME',
-        payload: json
+        payload: json,
       });
     })();
   }, []);

@@ -3,8 +3,9 @@ import React, {
   useContext,
   useRef,
   useEffect,
-  useMemo
-} from "react";
+  useMemo,
+  useCallback,
+} from 'react';
 
 /**
  * Keeps local track between the effect and the Storage Entity they belong to.
@@ -31,10 +32,10 @@ const throwError = (conditionToThrow, msg) => {
  * @param {*} variable The variable for which the type is determined.
  * @returns {*} One of [`object`, `array`, `function`, `date`, `regexp`, `symbol`, `number`, `string`, `boolean`, `null`, `undefined`].
  */
-const getVariableType = variable => {
+const getVariableType = (variable) => {
   let toStr = Object.prototype.toString.call(variable);
   toStr = toStr.substring(1, toStr.length - 1);
-  return toStr.split(" ")[1].toLowerCase();
+  return toStr.split(' ')[1].toLowerCase();
 };
 
 /**
@@ -65,22 +66,22 @@ const getVariableType = variable => {
  * @param {Object} storageEntitiesObj An object containing all the Storage Entities in the app.
  * @returns {Object} An object containing the global initial state of the system and all the effects associated with it.
  */
-const createSystemStorage = storageEntitiesObj => {
+const createSystemStorage = (storageEntitiesObj) => {
   // Verify that `storageEntitiesObj` is an {Object}.
   throwError(
-    getVariableType(storageEntitiesObj) !== "object",
+    getVariableType(storageEntitiesObj) !== 'object',
     `The argument passed to the 'createSystemStorage' function must be an Object.`
   );
 
   let globalEffects = {};
   let globalInitialState = {};
 
-  Object.keys(storageEntitiesObj).forEach(key => {
+  Object.keys(storageEntitiesObj).forEach((key) => {
     const currentStorageEntity = storageEntitiesObj[key];
 
     // Verify that `currentStorageEntity` is an {Object}.
     throwError(
-      getVariableType(currentStorageEntity) !== "object",
+      getVariableType(currentStorageEntity) !== 'object',
       `Expected ${key} to be an Object.`
     );
 
@@ -94,30 +95,30 @@ const createSystemStorage = storageEntitiesObj => {
 
     // Verify that `effects` prop is an {Object}.
     throwError(
-      getVariableType(effects) !== "object",
+      getVariableType(effects) !== 'object',
       `Expected '${key}.effects' to be an Object.`
     );
 
     // Verify that `initialState` prop is not a {Function}, {Date}, {Regexp} or {Symbol}.
     throwError(
-      getVariableType(initialState) === "function" ||
-        getVariableType(initialState) === "date" ||
-        getVariableType(initialState) === "regexp" ||
-        getVariableType(initialState) === "symbol",
+      getVariableType(initialState) === 'function' ||
+        getVariableType(initialState) === 'date' ||
+        getVariableType(initialState) === 'regexp' ||
+        getVariableType(initialState) === 'symbol',
       `Expected '${key}.initialState' to be a primitive type, Object or Array.`
     );
 
     globalEffects = { ...globalEffects, ...currentStorageEntity.effects };
     globalInitialState[key] = currentStorageEntity.initialState;
 
-    Object.keys(currentStorageEntity.effects).forEach(effectKey =>
+    Object.keys(currentStorageEntity.effects).forEach((effectKey) =>
       effectsToStorageEntityMap.set(effectKey, key)
     );
   });
 
   return {
     globalEffects,
-    globalInitialState
+    globalInitialState,
   };
 };
 
@@ -135,13 +136,13 @@ let reducerFn = null;
 const createStore = (systemStorage, options) => {
   // Verify that `systemStorage` is an {Object}.
   throwError(
-    getVariableType(systemStorage) !== "object",
+    getVariableType(systemStorage) !== 'object',
     `The 'systemStorage' argument passed to the 'createStore' function must be an Object.`
   );
 
   // Verify that `options` is an {Object}.
   throwError(
-    getVariableType(options) !== "object",
+    getVariableType(options) !== 'object',
     `The 'options' argument passed to the 'createStore' function must be an Object.`
   );
 
@@ -157,7 +158,7 @@ const createStore = (systemStorage, options) => {
     reducerFn = (state, action) => {
       // Verify that `action` is an {Object}.
       throwError(
-        getVariableType(action) !== "object",
+        getVariableType(action) !== 'object',
         `Expected ${action} to be an Object.`
       );
 
@@ -168,17 +169,17 @@ const createStore = (systemStorage, options) => {
 
       // Verify that `type` prop is a {String}.
       throwError(
-        getVariableType(type) !== "string",
+        getVariableType(type) !== 'string',
         `Expected ${type} to be an String.`
       );
 
       if (payload) {
         // Verify that `payload` prop is not a {Function}, {Date}, {Regexp} or {Symbol}.
         throwError(
-          getVariableType(payload) === "function" ||
-            getVariableType(payload) === "date" ||
-            getVariableType(payload) === "regexp" ||
-            getVariableType(payload) === "symbol",
+          getVariableType(payload) === 'function' ||
+            getVariableType(payload) === 'date' ||
+            getVariableType(payload) === 'regexp' ||
+            getVariableType(payload) === 'symbol',
           `Expected 'payload' to be a primitive type, Object or Array.`
         );
       }
@@ -186,7 +187,7 @@ const createStore = (systemStorage, options) => {
       const fn = systemStorage.globalEffects[type];
       const key = effectsToStorageEntityMap.get(type);
 
-      return fn && typeof fn === "function"
+      return fn && typeof fn === 'function'
         ? { ...state, [key]: fn(state[key], payload) }
         : state;
     };
@@ -203,15 +204,19 @@ const createStore = (systemStorage, options) => {
     prevState.current = state;
   });
 
-  if (process.env.NODE_ENV === "development") {
-    if (prevState.current && options.logging) {
-      console.log(`Previous state: `, prevState.current);
-      console.log(`Current state: `, state);
-    }
+  if (options.globallyDebugState) {
+    window.getState = () => console.log(`Current state: `, state);
+  }
 
+  if (prevState.current && options.logging) {
+    console.log(`Previous state: `, prevState.current);
+    console.log(`Current state: `, state);
+  }
+
+  if (process.env.NODE_ENV === 'development') {
     // `dispatch` needs to be memoized to avoid re-renders.
     dispatch = useMemo(
-      () => action => {
+      () => (action) => {
         if (options.logging) {
           console.log(`Triggered '${action.type}'.`);
         }
@@ -235,13 +240,29 @@ const createStore = (systemStorage, options) => {
  * @param {Object} options A object defining the configuration for `simpply`.
  * @return {React.FunctionComponentElement} Returns the app's `Provider` component.
  */
-const createProvider = (
-  systemStorage,
-  options = {
-    logging: true
+const createProvider = (systemStorage, options = {}) => ({ children }) => {
+  let finalOptions = {};
+
+  if (process.env.NODE_ENV === 'development') {
+    finalOptions = {
+      ...{
+        logging: true,
+        globallyDebugState: true,
+      },
+      ...options,
+    };
+  } else {
+    finalOptions = {
+      ...{
+        logging: false,
+        globallyDebugState: false,
+      },
+      ...options,
+    };
   }
-) => ({ children }) => {
-  const store = createStore(systemStorage, options);
+
+  const store = createStore(systemStorage, finalOptions);
+
   return React.createElement(Ctx.Provider, { value: store }, children);
 };
 
@@ -252,17 +273,17 @@ const createProvider = (
  * @param {Function | Null} mapStateToProps A function returning an object defining which slice of the global state will be injected in the wrapper component. If `mapStateToProps` is `null`, only `dispatch` will be injected.
  * @returns {Function} A HOF to apply to a React component.
  */
-const connect = mapStateToProps => Component => {
+const connect = (mapStateToProps) => (Component) => {
   const MemoComponent = React.memo(Component);
 
-  const EnhancedComponent = props => {
+  const EnhancedComponent = (props) => {
     const { state, dispatch } = useContext(Ctx);
     let slicedState = {};
 
-    // Verify that `mapStateToProps` is eiterh a {Function} or {Null}.
+    // Verify that `mapStateToProps` is either a {Function} or {Null}.
     throwError(
-      getVariableType(mapStateToProps) !== "function" &&
-        getVariableType(mapStateToProps) !== "null",
+      getVariableType(mapStateToProps) !== 'function' &&
+        getVariableType(mapStateToProps) !== 'null',
       `'mapStateToProps' must be either a Function or Null.`
     );
 
@@ -272,14 +293,14 @@ const connect = mapStateToProps => Component => {
 
     // Verify that `slicedState` is an {Object}.
     throwError(
-      getVariableType(slicedState) !== "object",
+      getVariableType(slicedState) !== 'object',
       `The result of calling 'mapStateToProps' function must be an Object. 'mapStateToProps' can also be Null, in which case only 'dispatch' will be injected.`
     );
 
     return React.createElement(MemoComponent, {
       ...props,
       ...slicedState,
-      dispatch
+      dispatch,
     });
   };
 
