@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/r31gN/simpply.git"
+    "url": "git+https://github.com/vladzelinschi/simpply.git"
   },
   "keywords": [
     "state-management",
@@ -16,12 +16,12 @@
     "react-hooks",
     "hooks"
   ],
-  "author": "Vlad Zelinschi <vlad@krak3n.co>",
+  "author": "Vlad Zelinschi <the.reignn@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/r31gN/simpply/issues"
+    "url": "https://github.com/vladzelinschi/simpply/issues"
   },
-  "homepage": "https://github.com/r31gN/simpply#readme",
+  "homepage": "https://github.com/vladzelinschi/simpply#readme",
   "peerDependencies": {
     "react": "^16.13.1"
   },
