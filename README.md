@@ -211,13 +211,13 @@ const MyComponent = ({ dispatch }) => {
 
 ### Examples
 
-For an example that uses `simpply`, check out [this repo](https://github.com/r31gN/react-state-management).
+For an example that uses `simpply`, check out [this repo](https://github.com/vladzelinschi/react-state-management).
 
 ### Author
 
 **Name**: Vlad Zelinschi
 
-**Email**: `the.reignn@gmail.com` or `vlad@krak3n.co`
+**Email**: `the.reignn@gmail.com`
 
 ### License
 
